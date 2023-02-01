@@ -16,3 +16,11 @@ Price to earnings ( P / E ratio) (Long Run Determinant, but still we can use it 
 
 Hamze -- As you said , we shall divide the top 30 companies by sector if you want, and see which sector is more/less volatile.
 
+
+
+
+
+
+
+Important Notes:
+https://stackoverflow.com/questions/67746560/issues-while-extracting-industry-sector-from-yahoo-finance-package
