@@ -9,56 +9,62 @@ import googlefinance as finance
 from yahooquery import Ticker
 import openpyxl
 
-# Display all collumns
+# Display all columns
 pd.set_option("display.max_columns", None)
 
-# Companies listed in the Financial Times Stock Exchange 100 and in the Financial Times Stock Exchange 250
 
-# Read the CSV File
-FTSE100 = pd.read_csv("EPIC.csv")
+
+# Read the CSV File / contains the top 30 companies listed in the FTSE100 Index
+FTSE = pd.read_csv("EPIC.csv")
 
 # Share Codes
-symbols = FTSE100["Symbol"]
+symbols = FTSE["Symbol"]
 all_symbols = symbols.tolist()
-all_symbols = " ".join(all_symbols)
-
+all_symbols1 = " ".join(all_symbols)
 
 #Reference This
 # https://stackoverflow.com/questions/71161902/get-info-on-multiple-stock-tickers-quickly-using-yfinance
-
-print(all_symbols)
-
 
 
 # There is a way that is more efficient /////// https://stackoverflow.com/questions/71161902/get-info-on-multiple-stock-tickers-quickly-using-yfinance
 # The code below may not be entirely accurate. See website provided above
 
-#--------------------------------------------------------------------------------------------------------
-#   This section was made by using the yfinance module ( I believe it is not necessary)
-#   Download all info
-
-
-#my_info = yf.download(all_symbols, start="2022-06-01", end="2023-01-01", group_by="ticker")
-
-
-# print(my_info.info)
-
-#--------------------------------------------------------------------------------------------------------
-
 
 print("Main Method",100 * "-")
 
 # Select all symbols of the top 30 companies listed in FTSE100
-top30 = Ticker(all_symbols)
+top30 = Ticker(all_symbols, progress=True)
 
 
 # Retrieve all financial data from the top 30 companies listed in the FTSE100
 financial_data = top30.all_financial_data()
 
 print(financial_data)
+print("-"*100)
+
+
 
 
 # Save all the information to an Excel format
 dataset = financial_data.to_excel("output.xlsx")
+
+
+
+
+# Yfinance module to get all the information that we need / May be the most efficient way to get results, although slower
+# Create empty Dataframe
+info_we_need = pd.DataFrame()
+
+for symbol in all_symbols:
+    all_info = yf.Ticker(symbol).info
+    #Add more parameters here, such as low, high , daily , close P/E ratio and EPS, sentiment analysis, etc
+    sector = all_info.get("sector")   # Sector Parameter
+    info_we_need = info_we_need.append({"Symbol": symbol,"Sector": sector}, ignore_index= True)
+
+print(info_we_need)
+
+
+
+
 
 
