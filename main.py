@@ -28,18 +28,16 @@ print(data)
 print(type(data))
 
 
-
-empty = pd.DataFrame()
+sector_info = pd.DataFrame()
 
 for ticker in all_symbols:
     ind = yf.Ticker(ticker)
-    sector = ind.info["sector"]
+    sector = ind["sector"]
+    sector_info.append({"Symbol": ticker, "Sector": sector}, ignore_index= True)
 
 
 
-
-print(sector)
-
+print(sector_info)
 
 
 
