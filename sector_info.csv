@@ -1,31 +1,31 @@
 ,Symbol,Sector,Forward EPS,Forward PE
 0,PRU.L,Financial Services,1.01,13.39604
-1,SPX.L,Industrials,404.83,0.30136108
-2,SSE.L,Utilities,139.14,0.12570073
-3,MNG.L,Financial Services,20.26,0.10201382
-4,BATS.L,Consumer Defensive,399.74,0.07776305
-5,EXPN.L,Industrials,1.18,26.347458
-6,SMIN.L,Industrials,95.28,0.18702771
-7,ENT.L,Consumer Cyclical,70.21,0.22283152
-8,TSCO.L,Consumer Defensive,20.92,0.11840344
-9,CPG.L,Consumer Cyclical,97.67,0.19407189
-10,RTO.L,Industrials,23.66,0.2112426
-11,SDR.L,Financial Services,33.6,0.14880952
-12,RS1.L,Industrials,59.41,0.17303485
-13,CCH.L,Consumer Defensive,1.44,13.666529
-14,HLN.L,Healthcare,19.16,0.16672756
-15,BA.L,Industrials,58.3,0.14305317
-16,ABDN.L,Financial Services,9.95,0.21869348
-17,CNA.L,Utilities,20.34,0.04673712
-18,VOD.L,Communication Services,0.09,10.316566
-19,SHEL.L,Energy,3.92,6.0369897
-20,STJ.L,Financial Services,72.08,0.18007769
-21,RMV.L,Communication Services,24.7,0.24582997
+1,SPX.L,Industrials,404.83,0.30131465
+2,SSE.L,Utilities,139.14,0.1256648
+3,MNG.L,Financial Services,20.26,0.10192497
+4,BATS.L,Consumer Defensive,399.74,0.07777555
+5,EXPN.L,Industrials,1.18,26.355932
+6,SMIN.L,Industrials,95.28,0.18692276
+7,ENT.L,Consumer Cyclical,70.21,0.22268908
+8,TSCO.L,Consumer Defensive,20.92,0.11835565
+9,CPG.L,Consumer Cyclical,97.67,0.1945326
+10,RTO.L,Industrials,23.66,0.2114962
+11,SDR.L,Financial Services,33.6,0.14877976
+12,RS1.L,Industrials,59.41,0.17286652
+13,CCH.L,Consumer Defensive,1.44,13.659721
+14,HLN.L,Healthcare,19.16,0.16735385
+15,BA.L,Industrials,58.3,0.14291595
+16,ABDN.L,Financial Services,9.95,0.21859297
+17,CNA.L,Utilities,20.34,0.046637166
+18,VOD.L,Communication Services,0.09,10.325556
+19,SHEL.L,Energy,3.92,6.040254
+20,STJ.L,Financial Services,72.08,0.18000832
+21,RMV.L,Communication Services,24.7,0.24599189
 22,SMT.L,Financial Services,,
-23,FRAS.L,Consumer Cyclical,81.49,0.09774205
+23,FRAS.L,Consumer Cyclical,81.49,0.09761934
 24,AHT.L,Industrials,3.33,17.003002
-25,AAF.L,Communication Services,0.16,7.0114813
-26,AUTO.L,Communication Services,27.68,0.22781792
-27,ANTO.L,Basic Materials,0.58,30.172415
+25,AAF.L,Communication Services,0.16,7.025863
+26,AUTO.L,Communication Services,27.68,0.22796242
+27,ANTO.L,Basic Materials,0.58,30.155174
 28,PSN.L,Consumer Cyclical,131.09,0.11324282
-29,RR.L,Industrials,3.41,0.31560117
+29,RR.L,Industrials,3.41,0.31571847

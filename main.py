@@ -7,11 +7,12 @@ import warnings
 warnings.filterwarnings("ignore")   # Remove deprecated warnings
 import pandas as pd
 import plotly.express as px
-import googlefinance as finance
 from yahooquery import Ticker
 import openpyxl
 import ray
+import pandasdmx as pdmx
 import sklearn as sk
+
 
 pd.set_option("display.max_columns", None)
 
@@ -59,6 +60,21 @@ print(sector_info)
 
 sector_info_csv = sector_info.to_csv("sector_info.csv")
 
+# Reference This
+#https://aeturrell.github.io/coding-for-economists/data-extraction.html
+
+# Gross Domestic Product Data from OECD/ Using its api
+# Request Access to OECD API
+oecd_data = pdmx.Request("OECD")
+
+GDP = oecd_data.data(
+    resource_id = "QNA",
+    key = "GBR.B1_GE.GPSA.Q/all?startTime=2018-Q1&endTime=2022-Q4"
+).to_pandas()
+
+
+print(GDP)
+
 # Merge the Datasets with a common key (variable--- "Symbol") / Can merge more than 2 DataFrames
 data = pd.merge(data,sector_info, how="inner")
 print(data)
@@ -78,3 +94,4 @@ print(data)
 # Testing / Can remove Later
 appl = yf.Ticker("AHT.L")
 print(appl.info)
+
