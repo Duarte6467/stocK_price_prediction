@@ -57,11 +57,15 @@ for ticker in all_symbols:
 
 print(sector_info)
 
-sector_info = sector_info.to_csv("sector_info.csv")
+sector_info_csv = sector_info.to_csv("sector_info.csv")
 
 # Merge the Datasets with a common key (variable--- "Symbol") / Can merge more than 2 DataFrames
 data = pd.merge(data,sector_info, how="inner")
 print(data)
+
+# This section, we need to do a groupby.mean or difference, to get the data all neat.
+# We can do a groupby("Symbol"), which will average the values for each company, or groupby("Sector"), which will average
+# the values of each sector, or we can do it both.
 
 
 
