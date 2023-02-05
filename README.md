@@ -24,3 +24,10 @@ Hamze -- As you said , we shall divide the top 30 companies by sector if you wan
 
 Important Notes:
 https://stackoverflow.com/questions/67746560/issues-while-extracting-industry-sector-from-yahoo-finance-package
+
+
+
+
+
+Very Important Articles , containing the code to run the ML Algorithms:
+https://www.analyticsvidhya.com/blog/2021/10/machine-learning-for-stock-market-prediction-with-step-by-step-implementation/
