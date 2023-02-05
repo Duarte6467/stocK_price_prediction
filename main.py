@@ -82,8 +82,8 @@ print(final_dataset)
 
 # This section, we need to do a groupby.mean or difference, to get the data all neat.
 
-
-grouped_by = data.groupby(["Sector","Date"]).mean()
+# Grouped by Sector and Date
+grouped_by = final_dataset.groupby(["Sector","Date"]).mean()
 print(grouped_by)
 
 # We can do a groupby("Symbol"), which will average the values for each company, or groupby("Sector"), which will average
