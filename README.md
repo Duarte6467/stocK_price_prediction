@@ -31,3 +31,4 @@ https://stackoverflow.com/questions/67746560/issues-while-extracting-industry-se
 
 Very Important Articles , containing the code to run the ML Algorithms:
 https://www.analyticsvidhya.com/blog/2021/10/machine-learning-for-stock-market-prediction-with-step-by-step-implementation/
+https://towardsdatascience.com/stock-market-analytics-with-pca-d1c2318e3f0e
