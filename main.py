@@ -9,7 +9,6 @@ import pandas as pd
 import plotly.express as px
 from yahooquery import Ticker
 import openpyxl
-import ray
 import pandasdmx as pdmx
 import sklearn as sk
 
@@ -26,7 +25,7 @@ symbols = FTSE["Symbol"]
 all_symbols = symbols.tolist()
 
 # Yfinance module to get all the information that we need / May be the most efficient way to get results, although slower
-data = yf.download(all_symbols, start= "2018-02-05", end= "2023-02-02" , interval="1d", threads= True, group_by= "ticker")
+data = yf.download(all_symbols, period="2y" , interval="1d", threads= True, group_by= "ticker")
 
 # Check Summary Statistics for each Symbol
 #summary_statistics = data.describe()
@@ -37,6 +36,8 @@ data = yf.download(all_symbols, start= "2018-02-05", end= "2023-02-02" , interva
 data = data.stack(0).reset_index().rename(columns= {"level_1":"Symbol"})
 
 print(data)
+
+
 
 
 
@@ -76,22 +77,32 @@ GDP = oecd_data.data(
 print(GDP)
 
 # Merge the Datasets with a common key (variable--- "Symbol") / Can merge more than 2 DataFrames
-data = pd.merge(data,sector_info, how="inner")
-print(data)
+final_dataset = pd.merge(data,sector_info, how="inner")
+print(final_dataset)
 
 # This section, we need to do a groupby.mean or difference, to get the data all neat.
+
+
+grouped_by = data.groupby(["Sector","Date"]).mean()
+print(grouped_by)
+
 # We can do a groupby("Symbol"), which will average the values for each company, or groupby("Sector"), which will average
 # the values of each sector, or we can do it both.
 
 
 
+# Testing / Can remove Later
+appl = yf.Ticker("AHT.L")
+print(appl.info)
 
 
 
 
 # This is the part where thhe Machine Learning Tecniques ( Logistic Regresion and whatnot) will do its magic
 
-# Testing / Can remove Later
-appl = yf.Ticker("AHT.L")
-print(appl.info)
+plt.figure()
 
+plt.plot(data["Date"], data["Adj Close"])
+plt.grid()
+
+plt.show()

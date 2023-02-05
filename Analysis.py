@@ -4,7 +4,6 @@ import yfinance as yf
 import sklearn as sk
 import matplotlib
 from matplotlib import pyplot as plt
-
 import pandas_datareader as pdr
 import datetime as dt
 
