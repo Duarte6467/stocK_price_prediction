@@ -4,7 +4,7 @@ import numpy as np
 import requests
 import random as rd
 import warnings
-warnings.filterwarnings("ignore")   # Remove deprecated warnings
+warnings.filterwarnings("ignore")   # Remove deprecated warnings / from pandas for instance
 import pandas as pd
 import plotly.express as px
 from yahooquery import Ticker
@@ -85,7 +85,6 @@ print(final_dataset)
 # Grouped by Sector and Date
 grouped_by = final_dataset.groupby(["Sector","Date"]).mean()
 print(grouped_by)
-
 # We can do a groupby("Symbol"), which will average the values for each company, or groupby("Sector"), which will average
 # the values of each sector, or we can do it both.
 
@@ -102,7 +101,7 @@ print(appl.info)
 
 plt.figure()
 
-plt.plot(data["Date"], data["Adj Close"])
+plt.plot(grouped_by["Date"], grouped_by["Adj Close"])
 plt.grid()
 
 plt.show()
