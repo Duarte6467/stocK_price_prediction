@@ -1,6 +1,1 @@
-Abstract:
 
-The statistical study of Stock Markets around the world have always been considered as a stochastic process. However, with the aid of technical indicators developed 
-inside the stock market and with exponential development of algorithms in Machine Learning, the stock market may be somewhat predicatble. In other words, an analysis
-in the stock market seems less stochastic. Thus, in this paper, we will use Machine Learning Algorithms, such as Linear/Logisitc Regression and Support Vector Machines
-to try to predict which sectors included in the FTSE100 Index are likely to increease/decrease in the short-run.
