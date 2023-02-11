@@ -1,1 +1,101 @@
-""
+,Symbol,Sector,Forward EPS,Forward PE
+0,HLN.L,Healthcare,19.16,0.17197287
+1,BME.L,Consumer Defensive,14.86,0.33209962
+2,SN.L,Healthcare,0.71,16.732395
+3,SHEL.L,Energy,3.56,6.780899
+4,AZN.L,Healthcare,6.07,17.42669
+5,RKT.L,Consumer Defensive,342.61,0.16946383
+6,JD.L,Consumer Cyclical,13.02,0.14335637
+7,CPG.L,Consumer Cyclical,97.67,0.19719464
+8,AAF.L,Communication Services,0.16,7.0875
+9,BA.L,Industrials,58.3,0.14497428
+10,LSEG.L,Financial Services,340.83,0.22427605
+11,BT-A.L,Communication Services,18.92,0.07116807
+12,ULVR.L,Consumer Defensive,2.73,15.278389
+13,GLEN.L,Basic Materials,0.89,6.230337
+14,INF.L,Communication Services,35.2,0.19710226
+15,WPP.L,Communication Services,100.33,0.103010066
+16,SKG.L,Consumer Cyclical,2.6,13.8307705
+17,BP.L,Energy,0.85,5.718235
+18,ENT.L,Consumer Cyclical,70.04,0.22665618
+19,CTEC.L,Healthcare,0.11,22.0
+20,BNZL.L,Consumer Defensive,173.82,0.17874813
+21,DCC.L,Energy,474.56,0.10032452
+22,CCH.L,Consumer Defensive,1.46,13.623287
+23,SMDS.L,Consumer Cyclical,38.32,0.096163884
+24,RS1.L,Industrials,59.41,0.17421311
+25,PSH.L,Financial Services,,
+26,HLMA.L,Industrials,80.34,0.28815037
+27,SPX.L,Industrials,404.83,0.30506635
+28,RIO.L,Basic Materials,6.33,9.680885
+29,MNDI.L,Basic Materials,1.35,11.859259
+30,ANTO.L,Basic Materials,0.6,28.933332
+31,HSBA.L,Financial Services,0.83,7.189157
+32,STAN.L,Financial Services,0.97,6.969072
+33,FRES.L,Basic Materials,0.31,26.348387
+34,WEIR.L,Industrials,104.14,0.17702131
+35,FCIT.L,Financial Services,,
+36,DGE.L,Consumer Defensive,180.02,0.19878346
+37,GSK.L,Healthcare,1.68,8.569048
+38,AAL.L,Basic Materials,3.54,9.646893
+39,CRDA.L,Basic Materials,244.99,0.29462427
+40,SGE.L,Technology,33.58,0.24026205
+41,MRO.L,Industrials,9.39,0.16176783
+42,SMIN.L,Industrials,95.28,0.1886545
+43,BEZ.L,Financial Services,0.89,7.4325843
+44,PSON.L,Communication Services,56.75,0.16592069
+45,JMAT.L,Basic Materials,2.32,10.228449
+46,NXT.L,Consumer Cyclical,498.11,0.14012969
+47,PRU.L,Financial Services,1.03,13.145631
+48,HL.L,Financial Services,57.38,0.1654932
+49,LGEN.L,Financial Services,34.55,0.07562952
+50,OCDO.L,Consumer Defensive,,
+51,IMB.L,Consumer Defensive,315.7,0.06474501
+52,RMV.L,Communication Services,24.7,0.2491498
+53,BRBY.L,Consumer Cyclical,124.8,0.19871794
+54,BATS.L,Consumer Defensive,399.41,0.07825292
+55,RR.L,Industrials,3.41,0.3198827
+56,AUTO.L,Communication Services,27.68,0.23056358
+57,SSE.L,Utilities,139.14,0.12627569
+58,ITRK.L,Industrials,227.28,0.19922562
+59,BARC.L,Financial Services,32.76,0.057582423
+60,RTO.L,Industrials,23.69,0.21409878
+61,CRH.L,Basic Materials,2.83,13.929329
+62,IHG.L,Consumer Cyclical,2.74,21.10949
+63,SBRY.L,Consumer Defensive,20.01,0.13368316
+64,SMT.L,Financial Services,,
+65,SDR.L,Financial Services,33.6,0.14934525
+66,FRAS.L,Consumer Cyclical,81.49,0.0985397
+67,HSX.L,Financial Services,1.14,9.846491
+68,AHT.L,Industrials,3.4,16.829412
+69,LAND.L,Real Estate,49.0,0.15138775
+70,III.L,Financial Services,238.14,0.06872008
+71,LLOY.L,Financial Services,7.48,0.07129679
+72,REL.L,Communication Services,111.5,0.22008969
+73,MNG.L,Financial Services,20.26,0.10271471
+74,EDV.L,Basic Materials,,
+75,PHNX.L,Financial Services,76.95,0.08369071
+76,AV.L,Financial Services,54.41,0.08276051
+77,FLTR.L,Consumer Cyclical,398.58,0.33318278
+78,SVT.L,Utilities,92.18,0.30928618
+79,IAG.L,Industrials,0.16,10.76875
+80,TSCO.L,Consumer Defensive,20.92,0.11778202
+81,ABDN.L,Financial Services,9.95,0.21778895
+82,NG.L,Utilities,74.21,0.13933432
+83,ADM.L,Financial Services,134.73,0.16922735
+84,ABF.L,Consumer Defensive,139.61,0.13834968
+85,EXPN.L,Industrials,1.21,25.876032
+86,BLND.L,Real Estate,27.15,0.17197055
+87,STJ.L,Financial Services,72.08,0.17910653
+88,UU.L,Utilities,29.9,0.3595318
+89,WTB.L,Consumer Cyclical,143.17,0.21750367
+90,NWG.L,Financial Services,45.63,0.06710497
+91,KGF.L,Consumer Cyclical,25.08,0.11435407
+92,UTG.L,Real Estate,44.88,0.23083778
+93,BKG.L,Consumer Cyclical,342.75,0.12729394
+94,TW.L,Consumer Cyclical,10.43,0.1189837
+95,BDEV.L,Consumer Cyclical,38.92,0.121454276
+96,PSN.L,Consumer Cyclical,129.96,0.114458285
+97,CNA.L,Utilities,12.59,0.075663224
+98,SGRO.L,Real Estate,24.38,0.36300248
+99,VOD.L,Communication Services,0.1,9.113999
