@@ -55,10 +55,6 @@ sector_info_csv = sector_info.to_csv("sector_info.csv")
 
 # Reference This
 #https://aeturrell.github.io/coding-for-economists/data-extraction.html
-
-AAPL = yf.Ticker("aapl")
-print(AAPL.info)
-
 # Merge the Datasets with a common key (variable--- "Symbol") / Can merge more than 2 DataFrames
 final_dataset = pd.merge(data,sector_info, how="inner")
 print(final_dataset)
@@ -70,13 +66,13 @@ grouped_by = final_dataset.groupby(["Sector","Date"]).mean()
 print(grouped_by)
 
 
-# This is the part where thhe Machine Learning Tecniques ( Logistic Regresion and whatnot) will do its magic
+
 plt.figure()
 plt.plot(grouped_by["Date"], grouped_by["Adj Close"])
 plt.grid()
 plt.show()
 
-
+# Technical Indicators that will be used
 # Moving Average
 data.loc['mean'] = data.mean()  # insert average row at the bottom pandas
 
@@ -86,14 +82,18 @@ Close = Close.iloc[-1]
 print(Close)
 
 
-# Momentum
-MomentumClose = data["Adj Close"]
+# Momentum added to dataset
+# Just an example to see if it works!!! We dont need this, but yfinance is not working------10/02/2023
+data = data.sort_values(by= ["Symbol", "Date"], ascending= True)
 
 
-print(MomentumClose)
+data['momentum'] = (data['Adj Close'] - data['Adj Close'].shift(1))  # Momentum of 5 days Calculated
+
+print(data)
 
 
 
+# This is the part where thhe Machine Learning Tecniques ( Logistic Regresion and whatnot) will do its magic
 
 
 
