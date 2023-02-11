@@ -1,4 +1,5 @@
 import os.path
+import plotly.graph_objs as go
 
 import yfinance as yf
 import matplotlib.pyplot as plt
@@ -14,7 +15,7 @@ import openpyxl
 import pandasdmx as pdmx
 import sklearn as sk
 import os
-
+import plotly.subplots as sp
 
 pd.set_option("display.max_columns", None)
 
@@ -30,7 +31,7 @@ print(all_symbols)
 
 # Yfinance module to get all the information that we need / May be the most efficient way to get results, although slower
 data = yf.download(all_symbols, period="2y" , interval="1d", threads= True, group_by= "ticker")
-
+print(data)
 # Reference this
 # https://stackoverflow.com/questions/69117454/from-yfinance-to-manipulate-dataframe-with-pandas
 data = data.stack(0).reset_index().rename(columns= {"level_1":"Symbol"})
@@ -87,7 +88,7 @@ for sector in sector_names:
 
     # Separate each argument for clearer interpretation
     name_of_csv = f"{sector}.csv"
-    filepath = os.path.join("Sectors_csv", name_of_csv)
+    filepath = os.path.join( name_of_csv)
     each_sector.to_csv(filepath, index = False)
 
 
@@ -99,30 +100,52 @@ for sector in sector_names:
 
 
 # Fetch a list of the files included in the directory
-files = [f for f in os.listdir("Sectors_csv") if f.endswith(".csv")]
+files = [f for f in os.listdir() if f.endswith(".csv") and f not in  ["EPIC.csv", "sector_info.csv","output.csv"]]
+print(files)
 # Plot each graph with each correspondent CSV file
-fig , ax = plt.subplots(nrows=1 , ncols= len(files), figsize =(15,5))
+
+fig , axes = plt.subplots(nrows= len(files), ncols= 1 , figsize =(15,5))
+fig.subplots_adjust(wspace= 2) # increase the width between subplots
 
 # Plot adjusted close of every company ( each chart is separated between its sector) against time
 for i , file in enumerate(files):
-    filepath = os.path.join("Sectors_csv", file)
-    print(filepath)
-    df = pd.read_csv(r"C:\Users\naome\OneDrive\Ambiente de Trabalho\stocK_price_prediction\Sectors_csv")
+    filepath = os.path.join(file)
+    df = pd.read_csv(file)
     for stock_symbol , group in df.groupby("Symbol"):
-        ax[i].plot(group["Date"], group["Adj Close"], label = stock_symbol)
-        ax[i].set_title(file)
+        axes[i].plot(group["Date"], group["Adj Close"], label = stock_symbol)
+
+    axes[i].set_title(file, fontsize = 5)
+    axes[i].set_xlabel("Date", fontsize=10)
+    axes[i].set_ylabel("Adj Close", fontsize=10)
+    axes[i].grid(True)
 
 
-plt.tight_layout()
+
 plt.show()
-# reference this
 
 
+import plotly.express as px
+import os
+import pandas as pd
+import plotly.subplots as sp
 
+# Fetch a list of the files included in the directory
+files = [f for f in os.listdir() if f.endswith(".csv") and f not in  ["EPIC.csv", "sector_info.csv","output.csv"]]
+print(files)
 
+# Create a subplot for each file
+fig = sp.make_subplots(rows=len(files), cols=1)
 
+# Plot each graph with each correspondent CSV file
+for i , file in enumerate(files):
+    filepath = os.path.join(file)
+    df = pd.read_csv(file)
+    for stock_symbol , group in df.groupby("Symbol"):
+        fig.add_trace(px.line(group, x="Date", y="Adj Close", labels={"Adj Close": "Adj Close", "Date": "Date"}))
 
+    #fig.update_layout(title_text=file, height=400, width=800)
 
+fig.show()
 
 
 
