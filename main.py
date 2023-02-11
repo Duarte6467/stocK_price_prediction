@@ -8,6 +8,7 @@ import requests
 import random as rd
 import warnings
 warnings.filterwarnings("ignore")   # Remove deprecated warnings / from pandas for instance
+import seaborn as sns
 import pandas as pd
 import plotly.express as px
 from yahooquery import Ticker
@@ -32,6 +33,7 @@ print(all_symbols)
 # Yfinance module to get all the information that we need / May be the most efficient way to get results, although slower
 data = yf.download(all_symbols, period="2y" , interval="1d", threads= True, group_by= "ticker")
 print(data)
+print(data.columns)
 # Reference this
 # https://stackoverflow.com/questions/69117454/from-yfinance-to-manipulate-dataframe-with-pandas
 data = data.stack(0).reset_index().rename(columns= {"level_1":"Symbol"})
@@ -104,52 +106,34 @@ files = [f for f in os.listdir() if f.endswith(".csv") and f not in  ["EPIC.csv"
 print(files)
 # Plot each graph with each correspondent CSV file
 
-fig , axes = plt.subplots(nrows= len(files), ncols= 1 , figsize =(15,5))
-fig.subplots_adjust(wspace= 2) # increase the width between subplots
-
-# Plot adjusted close of every company ( each chart is separated between its sector) against time
-for i , file in enumerate(files):
-    filepath = os.path.join(file)
-    df = pd.read_csv(file)
-    for stock_symbol , group in df.groupby("Symbol"):
-        axes[i].plot(group["Date"], group["Adj Close"], label = stock_symbol)
-
-    axes[i].set_title(file, fontsize = 5)
-    axes[i].set_xlabel("Date", fontsize=10)
-    axes[i].set_ylabel("Adj Close", fontsize=10)
-    axes[i].grid(True)
-
-
-
-plt.show()
-
-
-import plotly.express as px
-import os
-import pandas as pd
-import plotly.subplots as sp
-
 # Fetch a list of the files included in the directory
 files = [f for f in os.listdir() if f.endswith(".csv") and f not in  ["EPIC.csv", "sector_info.csv","output.csv"]]
 print(files)
 
-# Create a subplot for each file
-fig = sp.make_subplots(rows=len(files), cols=1)
-
 # Plot each graph with each correspondent CSV file
-for i , file in enumerate(files):
+nrows = len(files)
+ncols = 1
+figsize = (30 , 5 * nrows)
+
+sns.set_style("whitegrid")
+
+fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize, sharex=True)
+
+
+
+# Plot adjusted close of every company ( each chart is separated between its sector) against time
+for i, file in enumerate(files):
     filepath = os.path.join(file)
     df = pd.read_csv(file)
-    for stock_symbol , group in df.groupby("Symbol"):
-        fig.add_trace(px.line(group, x="Date", y="Adj Close", labels={"Adj Close": "Adj Close", "Date": "Date"}))
+    for stock_symbol, group in df.groupby("Symbol"):
+        sns.lineplot(x="Date", y="Adj Close", data=group, ax=axes[i], label=stock_symbol)
 
-    #fig.update_layout(title_text=file, height=400, width=800)
+    axes[i].set_title(file, fontsize=16)
+    axes[i].set_xlabel("Date", fontsize=10)
+    axes[i].set_ylabel("Adj Close", fontsize=10)
+    axes[i].set_yscale('log')  # Set the y-axis to logarithmic scale
 
-fig.show()
-
-
-
-
+plt.show()
 
 # Technical Indicators that will be used
 # Moving Average
