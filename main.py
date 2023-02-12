@@ -1,34 +1,26 @@
 import os.path
-import plotly.graph_objs as go
-
 import yfinance as yf
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
-import random as rd
 import warnings
-warnings.filterwarnings("ignore")   # Remove deprecated warnings / from pandas for instance
+
 import seaborn as sns
 import pandas as pd
 import plotly.express as px
-from yahooquery import Ticker
 import openpyxl
-import pandasdmx as pdmx
 import sklearn as sk
 import os
-import plotly.subplots as sp
 
-pd.set_option("display.max_columns", None)
+warnings.filterwarnings("ignore")   # Remove deprecated warnings / from pandas for instance
 
 # Read the CSV File / contains the top 30 companies listed in the FTSE100 Index
-FTSE = pd.read_csv("EPIC.csv")
+FTSE100 = pd.read_csv("EPIC.csv")
 
 #  Symbol Codes listed in the FTSE100 index / TOP30
-symbols = FTSE["Symbol"]
+symbols = FTSE100["Symbol"]
 
-# Convert format to List
-all_symbols = symbols.tolist()
-print(all_symbols)
+all_symbols = symbols.tolist()  # Convert format to List
 
 # Yfinance module to get all the information that we need / May be the most efficient way to get results, although slower
 data = yf.download(all_symbols, period="2y" , interval="1d", threads= True, group_by= "ticker")
@@ -82,6 +74,12 @@ print(sector_info.value_counts("Sector"))
 final_dataset = final_dataset.groupby("Sector")
 
 sector_names  = final_dataset.groups.keys()
+
+
+
+
+
+
 
 # Run only once to decrease completion time
 for sector in sector_names:
