@@ -22,20 +22,16 @@ symbols = FTSE100["Symbol"]
 
 all_symbols = symbols.tolist()  # Convert format to List
 
-# Yfinance module to get all the information that we need / May be the most efficient way to get results, although slower
+# Yfinance module to get all the information that we need / Efficient way to get results, although slower
 data = yf.download(all_symbols, period="2y" , interval="1d", threads= True, group_by= "ticker")
-print(data)
-print(data.columns)
-# Reference this
+
+
+
 # https://stackoverflow.com/questions/69117454/from-yfinance-to-manipulate-dataframe-with-pandas
-data = data.stack(0).reset_index().rename(columns= {"level_1":"Symbol"})
+data = data.stack(0).reset_index().rename(columns= {"level_1":"Symbol"}) # Convert Multiindex to 2D Dataframe
 
-print(data)
+print(data)  # Pre-Visualize Raw Data
 
-
-# Experimental Feature using Ray module
-#https://stackoverflow.com/questions/73123556/downloading-yahoo-finance-data-much-faster-than-using-just-a-for-loop
-#------------------------------------------------------------------------------------------------------------------
 
  # Get the sector for each symbol
 #sector_info = pd.DataFrame()
