@@ -149,11 +149,19 @@ data["Volatility"] = by_symbol.pct_change().rolling(window = 2).std()
 
 
 # Relative Strenght Index (RSI)
+
 RSI_lag = 10 # 10 days lag period
 RSI = by_symbol.apply(lambda x : RSIIndicator(x, window= RSI_lag).rsi())
-data["RSI"] = RSI.values
+data["RSI"] = RSI.values # Fetch Values
+print(type(RSI))
 
-print(data)
+# Information Fetched From : https://technical-analysis-library-in-python.readthedocs.io/en/latest/ta.html#momentum-indicators
+
+# Now we need the output feature, which will be 0 if the Adj close from time t is smaller than t-1
+# and it will be 1 if Adj Close from time t is bigger than t-1
+
+
+
 
 
 
