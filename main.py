@@ -74,6 +74,8 @@ sector_names  = final_dataset.groups.keys()
 
 
 
+#---------------------------------------------------------------------------------------------------------------------
+"""The following code section is just used to create charts and csv files for each sector"""
 
 
 
@@ -90,28 +92,15 @@ for sector in sector_names:
 
 
 
-
-
-
-
-
-# Fetch a list of the files included in the directory
+# Fetch a list of each sector included in the directory
 files = [f for f in os.listdir() if f.endswith(".csv") and f not in  ["EPIC.csv", "sector_info.csv","output.csv"]]
-print(files)
-# Plot each graph with each correspondent CSV file
-
-# Fetch a list of the files included in the directory
-files = [f for f in os.listdir() if f.endswith(".csv") and f not in  ["EPIC.csv", "sector_info.csv","output.csv"]]
-print(files)
 
 # Plot each graph with each correspondent CSV file
-nrows = len(files)
-ncols = 1
-figsize = (30 , 5 * nrows)
+figsize = (30 , 5 * len(files))
 
 sns.set_style("whitegrid")
 
-fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize, sharex=True)
+fig, axes = plt.subplots(nrows= len(files), ncols= 1, figsize= figsize,  sharex=True)
 
 
 
@@ -127,23 +116,34 @@ for i, file in enumerate(files):
     axes[i].set_ylabel("Adj Close", fontsize=10)
     axes[i].set_yscale('log')  # Set the y-axis to logarithmic scale
 
-plt.show()
+# Remove hashtag after
+#plt.show()
+
+#----------------------------------------------------------------------------------------------------------------------
+# Data Manipulation Section
+# Sort values by Symbol and date
+data = data.sort_values(by=["Symbol", "Date"], ascending= True)
+data.set_index("Date", inplace= True)
+
+by_symbol = data.groupby("Symbol")["Adj Close"]
+
+
 
 # Technical Indicators that will be used
-# Moving Average
-data.loc['mean'] = data.mean()  # insert average row at the bottom pandas
-
-Close = data['Adj Close']
-print(Close)
-Close = Close.iloc[-1]
-print(Close)
+# Calculate Momentum for each Stock based on Adjusted Close Price
+momentum = by_symbol.apply(lambda x: x - x.shift(2))
 
 
+data = pd.concat([data, momentum.rename("Momentum")], axis = 1)
 
-# Just an example to see if it works!!! We don't need this, but yfinance is not working------10/02/2023
+print(data)
 
-# Momentum added to dataset
-data['momentum'] = (data['Adj Close'] - data['Adj Close'].shift(1))  # Momentum of 5 days Calculated
+# Moving average added to the dataset
+moving_average = data["Adj Close"].rolling(window = 3).mean()
+
+
+
+
 
 
 
