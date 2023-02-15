@@ -163,7 +163,8 @@ print(type(RSI))
 data["Predictor"] = data["Adj Close"].diff() # This is the output feature
 
 
-
+# Convert the 'Price_Diff' column to binary classification
+#df["Binary Predictor"] = df["Predictor"].apply(lambda x: 1 if x > 0 else 0)
 
 
 
