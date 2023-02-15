@@ -7,6 +7,7 @@ import warnings
 
 import seaborn as sns
 import pandas as pd
+import pandas_ta as ta
 import plotly.express as px
 import openpyxl
 import sklearn as sk
@@ -143,16 +144,17 @@ print(data)
 
 
 # Volatility
-# Calculate volatility (1 day lag) by each company
+# Calculate volatility (2 day lag) by each company
 
 data["Volatility"] = by_symbol.pct_change().rolling(window = 2).std()
 
 print(data)
 
 
+# Relative Strenght Index (RSI)
 
 
-# Moving average added to the dataset
+
 
 
 
