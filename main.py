@@ -142,9 +142,12 @@ data["Moving Average"] = data.groupby("Symbol")["Adj Close"].rolling(window = 2)
 print(data)
 
 
+# Volatility
+# Calculate volatility (1 day lag) by each company
+
+data["Volatility"] = by_symbol.pct_change().rolling(window = 2).std()
 
 print(data)
-
 
 
 
