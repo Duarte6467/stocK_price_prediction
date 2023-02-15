@@ -160,6 +160,7 @@ print(type(RSI))
 # Now we need the output feature, which will be 0 if the Adj close from time t is smaller than t-1
 # and it will be 1 if Adj Close from time t is bigger than t-1
 
+data["Predictor"] = data["Adj Close"].diff() # This is the output feature
 
 
 
