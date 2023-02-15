@@ -14,7 +14,7 @@ import os
 
 warnings.filterwarnings("ignore")   # Remove deprecated warnings / from pandas for instance
 
-# Read the CSV File / contains the top 30 companies listed in the FTSE100 Index
+# Read the CSV File / contains all symbols listed in FTSE100 index
 FTSE100 = pd.read_csv("EPIC.csv")
 
 #  Symbol Codes listed in the FTSE100 index / TOP30
@@ -123,23 +123,34 @@ for i, file in enumerate(files):
 # Data Manipulation Section
 # Sort values by Symbol and date
 data = data.sort_values(by=["Symbol", "Date"], ascending= True)
-data.set_index("Date", inplace= True)
-
-by_symbol = data.groupby("Symbol")["Adj Close"]
-
-
 
 # Technical Indicators that will be used
-# Calculate Momentum for each Stock based on Adjusted Close Price
+#Group by Symbol
+by_symbol = data.groupby("Symbol")["Adj Close"]
+
+# Momentum
+# Calculate Momentum for each Stock based on Adjusted Close Price with a 2-day lag
 momentum = by_symbol.apply(lambda x: x - x.shift(2))
-
-
+print(momentum)
 data = pd.concat([data, momentum.rename("Momentum")], axis = 1)
+print(data)
+
+# Moving Average
+# Calculated by symbol with a 3-day lag / Because it is a multi index DataFrame, we need to reset index
+# Rename the moving average calculation column from Adj Close to Moving Average
+data["Moving Average"] = data.groupby("Symbol")["Adj Close"].rolling(window = 2).mean().reset_index(0,drop = True)
+print(data)
+
+
 
 print(data)
 
+
+
+
+
 # Moving average added to the dataset
-moving_average = data["Adj Close"].rolling(window = 3).mean()
+
 
 
 
