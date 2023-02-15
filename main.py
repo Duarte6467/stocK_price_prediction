@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import requests
 import warnings
-
+from ta.momentum import RSIIndicator
 import seaborn as sns
 import pandas as pd
 import pandas_ta as ta
@@ -120,9 +120,11 @@ for i, file in enumerate(files):
 # Remove hashtag after
 #plt.show()
 
+
+# Data Manipulation Section
 #----------------------------------------------------------------------------------------------------------------------
 # Data Manipulation Section
-# Sort values by Symbol and date
+# Sort values by Symbol and date (avoid overlapping of calculations)
 data = data.sort_values(by=["Symbol", "Date"], ascending= True)
 
 # Technical Indicators that will be used
@@ -134,25 +136,24 @@ by_symbol = data.groupby("Symbol")["Adj Close"]
 momentum = by_symbol.apply(lambda x: x - x.shift(2))
 print(momentum)
 data = pd.concat([data, momentum.rename("Momentum")], axis = 1)
-print(data)
 
 # Moving Average
 # Calculated by symbol with a 3-day lag / Because it is a multi index DataFrame, we need to reset index
 # Rename the moving average calculation column from Adj Close to Moving Average
 data["Moving Average"] = data.groupby("Symbol")["Adj Close"].rolling(window = 2).mean().reset_index(0,drop = True)
-print(data)
-
 
 # Volatility
 # Calculate volatility (2 day lag) by each company
 
 data["Volatility"] = by_symbol.pct_change().rolling(window = 2).std()
 
-print(data)
-
 
 # Relative Strenght Index (RSI)
+RSI_lag = 10 # 10 days lag period
+RSI = by_symbol.apply(lambda x : RSIIndicator(x, window= RSI_lag).rsi())
+data["RSI"] = RSI.values
 
+print(data)
 
 
 
