@@ -188,10 +188,12 @@ for sector_0 in sector_names:
     log_reg.fit(x_train, y_train)
     log_reg_prediction = log_reg.predict(x_test)
     log_reg_accuracy = accuracy_score(log_reg_prediction , y_test)
+    log_reg_f1 = f1_score(log_reg_prediction , y_test)
 
-    print("Best C value for :", sector_0, random_search.best_params_["C"])
-    print("Validation Score", random_search.best_score_)
+
+    print("Best C value for ", sector_0, random_search.best_params_["C"])
     print("Accuracy for", sector_0,":", log_reg_accuracy * 100 , "%")
+    print("F1 Score for",sector_0,":",log_reg_f1)
 
 
 # Make the Long Short Term Memory Algorithm (LSTM)
@@ -220,9 +222,11 @@ for sector_1 in sector_names:
 
     # Calculate the Binary CrossEntropy and Accuracy
     loss, accuracy = lstm.evaluate(x_test, y_test)
+    f1 = f1_score(y_test, np.round(y_predict))
 
-    print(" Binary Cross entropy calculated in sector:", sector_1,":", loss)
-    print("Accuracy of Sector", sector_1,":", accuracy)
+    print("Binary Cross entropy calculated in sector:", sector_1,":", loss)
+    print("Accuracy of Sector", sector_1,":", accuracy *100,"%")
+    print("F1 score of Sector", sector_1, ":", f1)
 
 
 
