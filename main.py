@@ -11,8 +11,9 @@ import pandas_ta as ta
 import plotly.express as px
 import openpyxl
 import os
-import sklearn as sk
 from scipy.stats import uniform
+# SKLearn Modules
+import sklearn as sk
 from sklearn.preprocessing import FunctionTransformer
 from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
@@ -21,7 +22,6 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, f1_score , mean_squared_error
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import RandomizedSearchCV
-
 # Kera Modules
 import keras.backend as K
 from keras.callbacks import  EarlyStopping
@@ -30,8 +30,6 @@ from keras.models import load_model
 from keras.models import Sequential
 from keras.layers import LSTM , Dense , Dropout
 from keras.utils.vis_utils import plot_model
-
-
 warnings.filterwarnings("ignore")   # Remove deprecated warnings / from pandas for instance
 
 # Read the CSV File / contains all symbols listed in FTSE100 index
@@ -45,7 +43,9 @@ data = yf.download(all_symbols, period="2y" , interval="1d", threads= True, grou
 data = data.stack(0).reset_index().rename(columns= {"level_1":"Symbol"}) # Convert Multiindex to 2D Dataframe
 # Code Fetched from :  https://stackoverflow.com/questions/69117454/from-yfinance-to-manipulate-dataframe-with-pandas
 
- # Get the sector for each symbol
+#---------------------------------------------------------------------------------------------------------------------
+# This section is extremely bugged
+# Get the sector for each symbol
 #sector_info = pd.DataFrame()
 
 # This part takes ages to run / need to make this efficient
@@ -55,18 +55,25 @@ data = data.stack(0).reset_index().rename(columns= {"level_1":"Symbol"}) # Conve
 #    sector_info = sector_info.append({"Symbol": ticker, "Sector": sector}, ignore_index= True)
 
 #print(sector_info)
-
 #sector_info_csv = sector_info.to_csv("sector_info.csv")
-
+#----------------------------------------------------------------------------------------------------------------------
+# Fetch Sector Information from each Stock Symbol
 sector_info = pd.read_csv("sector_info.csv")
 sector_info = sector_info[["Symbol", "Sector"]]
 
+
+
+
+
+#----------------------------------------------------------------------------------------------------------------------
+# Optional Code just to plot and interpret some values. Not important for the main body!!
 # Merge the Datasets with a common key (variable--- "Symbol") / Can merge more than 2 DataFrames
 final_dataset = pd.merge(data,sector_info, how="inner")
 
 # Grouped by Sector and Date
 grouped_by = final_dataset.groupby(["Sector","Date"]).mean()
 
+# Give the number of Symbols(companies) in every sector listed in FTSE100
 print(sector_info.value_counts("Sector"))
 
 final_dataset = final_dataset.groupby("Sector")
@@ -113,14 +120,16 @@ for i, file in enumerate(files):
 
 #plt.show()
 
-# Data Manipulation Section
+
+
+
 #----------------------------------------------------------------------------------------------------------------------
 # Data Manipulation Section
 # Sort values by Symbol and date (avoid overlapping of calculations)
 data = data.sort_values(by=["Symbol", "Date"], ascending= True)
 data.columns = data.columns.astype(str)
 
-# Technical Indicators that will be used
+# Technical Indicators that will be used / Momentum , Moving Average , Relative Strength Index, Volatility
 #Group by Symbol will be used to calculate the following technical indicators
 by_symbol = data.groupby("Symbol")["Adj Close"]
 
@@ -128,16 +137,17 @@ by_symbol = data.groupby("Symbol")["Adj Close"]
 momentum = by_symbol.apply(lambda x: x - x.shift(2))
 data = pd.concat([data, momentum.rename("Momentum")], axis = 1)
 
-# Moving Average / Calculated by symbol with a 3-day lag / Because it is a multi index DataFrame, we need to reset index
+# Moving Average / Calculated by symbol with a 2-day lag / Because it is a multi index DataFrame, we need to reset index
 data["Moving Average"] = data.groupby("Symbol")["Adj Close"].rolling(window = 2).mean().reset_index(0,drop = True)
 
 # Volatility / Calculate volatility (2 day lag) by each company
 data["Volatility"] = by_symbol.pct_change().rolling(window = 2).std()
 
 # Relative Strength Index (RSI)
-RSI_lag = 10                                                                 # 10 days lag period
+RSI_lag = 10  # 10 days lag period
 RSI = by_symbol.apply(lambda x : RSIIndicator(x, window= RSI_lag).rsi())
-data["RSI"] = RSI.values                                                    # Fetch Values
+data["RSI"] = RSI.values   # Fetch Values
+
 # Information Fetched From : https://technical-analysis-library-in-python.readthedocs.io/en/latest/ta.html#momentum-indicators
 
 
@@ -152,7 +162,9 @@ data[columns_to_scale] = log_scale.transform(data[columns_to_scale])
 print("-"*100)
 print("The following section is strictly applied to Machine Learning")
 #--------------------------------------------------------------------------------------------------------
-# In this section, the values are averaged by its correspondent Sector and Date , respectively
+
+
+# In this section, the values are averaged by its correspondent Sector and Date, respectively
 # Now, we need to average the values of each stock by each sector, giving us an approach of investment by sector
 data = pd.merge(data, sector_info , how= "inner")
 data = data.groupby(["Sector","Date"]).mean()
@@ -197,7 +209,7 @@ for sector_0 in sector_names:
 
 
 # Make the Long Short Term Memory Algorithm (LSTM)
-# Most of the code was retrieved from:
+# Most of the code and its purpose was retrieved from:
 # https://www.analyticsvidhya.com/blog/2021/10/machine-learning-for-stock-market-prediction-with-step-by-step-implementation/
 
 for sector_1 in sector_names:
@@ -223,7 +235,6 @@ for sector_1 in sector_names:
     # Calculate the Binary CrossEntropy and Accuracy
     loss, accuracy = lstm.evaluate(x_test, y_test)
     f1 = f1_score(y_test, np.round(y_predict))
-
     print("Binary Cross entropy calculated in sector:", sector_1,":", loss)
     print("Accuracy of Sector", sector_1,":", accuracy *100,"%")
     print("F1 score of Sector", sector_1, ":", f1)
