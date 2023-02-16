@@ -12,30 +12,28 @@ import plotly.express as px
 import openpyxl
 import os
 import sklearn as sk
+from scipy.stats import uniform
 from sklearn.preprocessing import FunctionTransformer
 from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, f1_score
-
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import RandomizedSearchCV
 
 warnings.filterwarnings("ignore")   # Remove deprecated warnings / from pandas for instance
 
 # Read the CSV File / contains all symbols listed in FTSE100 index
 FTSE100 = pd.read_csv("EPIC.csv")
-
-#  Symbol Codes listed in the FTSE100 index / TOP30
+#  Symbol Codes listed in the FTSE100 index
 symbols = FTSE100["Symbol"]
 all_symbols = symbols.tolist()  # Convert format to List
 # Yfinance module to get all the information that we need / Efficient way to get results, although slower
 data = yf.download(all_symbols, period="2y" , interval="1d", threads= True, group_by= "ticker")
 
-# https://stackoverflow.com/questions/69117454/from-yfinance-to-manipulate-dataframe-with-pandas
 data = data.stack(0).reset_index().rename(columns= {"level_1":"Symbol"}) # Convert Multiindex to 2D Dataframe
-
-print(data)  # Pre-Visualize Raw Data
-
+# Code Fetched from :  https://stackoverflow.com/questions/69117454/from-yfinance-to-manipulate-dataframe-with-pandas
 
  # Get the sector for each symbol
 #sector_info = pd.DataFrame()
@@ -103,9 +101,7 @@ for i, file in enumerate(files):
     axes[i].set_ylabel("Adj Close", fontsize=10)
     axes[i].set_yscale('log')  # Set the y-axis to logarithmic scale
 
-# Remove hashtag after
-#plt.show()
-
+plt.show()
 
 # Data Manipulation Section
 #----------------------------------------------------------------------------------------------------------------------
@@ -113,8 +109,6 @@ for i, file in enumerate(files):
 # Sort values by Symbol and date (avoid overlapping of calculations)
 data = data.sort_values(by=["Symbol", "Date"], ascending= True)
 data.columns = data.columns.astype(str)
-data = pd.merge(data, sector_info , how= "inner") #
-print(data)
 
 # Technical Indicators that will be used
 #Group by Symbol will be used to calculate the following technical indicators
@@ -131,52 +125,59 @@ data["Moving Average"] = data.groupby("Symbol")["Adj Close"].rolling(window = 2)
 data["Volatility"] = by_symbol.pct_change().rolling(window = 2).std()
 
 # Relative Strength Index (RSI)
-RSI_lag = 10 # 10 days lag period
+RSI_lag = 10                                                                 # 10 days lag period
 RSI = by_symbol.apply(lambda x : RSIIndicator(x, window= RSI_lag).rsi())
-data["RSI"] = RSI.values # Fetch Values
+data["RSI"] = RSI.values                                                    # Fetch Values
 # Information Fetched From : https://technical-analysis-library-in-python.readthedocs.io/en/latest/ta.html#momentum-indicators
 
-# Create a Target Variable, using the calculation of Adj Closing price lag of 1 day, and then convert it to a binary classification
-data["Binary Predictor"] = data["Adj Close"].diff().apply(lambda x: 1 if x > 0 else 0)
-
-
-# Replace NaN values with backward filling method / Best for time-series
-data = data.fillna(method= "bfill")
-
-
-# Now, we need to scale the data , to make it easier to interpret and calculate / We will use log scaling, since it is
-# better to read and interpret economic indicators.
-# Function that applies the logarithmic scale to specific columns chosen
+# Code to scale raw data to logarithmic
 log_scale = FunctionTransformer(np.log1p , validate= True)
-
 # Apply the logarithmic scaling to the column
 columns_to_scale = ["Close","High","Low","Open","Volume"]
 data[columns_to_scale] = log_scale.transform(data[columns_to_scale])
 print("-"*100)
 print("The following section is strictly applied to Machine Learning")
 
-# Define features and label
+# Now, we need to average the values of each stock by each sector, giving us an approach of investment by sector
+data = pd.merge(data, sector_info , how= "inner")
+data = data.groupby(["Sector","Date"]).mean()
+data = data.reset_index()  # Reset the index
 
-stock_symbols =  data["Symbol"].unique()
+# Create a Target Variable, using the calculation of Adj Closing price lag of 1 day, and then convert it to a binary classification
+data["Binary Predictor"] = data["Adj Close"].diff().apply(lambda x: 1 if x > 0 else 0)
 
+# Replace NaN values with backward filling method / Best for time-series
+data = data.fillna(method= "bfill")
 
+# Fetch Unique Sectors
+sector_names = data["Sector"].unique()
+
+# Define the parameter distribution to check what is the best C-value
+param_dist = {"C" : uniform(0.1 , 20)}
 
 # We needed to make a loop to iterate the logistic regression through each symbol
-for symbol in stock_symbols:
-    data_symbol = data[data["Symbol"] == symbol]
+for sector_ in sector_names:
+    data_symbol = data[data["Sector"] == sector]
     X = data_symbol[[ "Close","High","Low", "Open","Volume","Momentum","Moving Average","Volatility","RSI"]]
     x_train , x_test , y_train, y_test = train_test_split(X, data_symbol["Binary Predictor"], test_size= 0.2)
 
     # Apply the Logistic Regression
-    log_reg = LogisticRegression()
-    log_reg.fit(x_train , y_train)
+    log_reg_c = LogisticRegression()
 
-    # Make predictions
+    # Perform Cross-Validation randomized search
+    random_search = RandomizedSearchCV(log_reg_c, param_distributions= param_dist , n_iter=100, cv= 5)
+    random_search.fit(x_train, y_train)
+
+    # Make prediction based on the  best C Value found
+    log_reg = LogisticRegression(C=random_search.best_params_["C"])
+
+    log_reg.fit(x_train, y_train)
     log_reg_prediction = log_reg.predict(x_test)
     log_reg_accuracy = accuracy_score(log_reg_prediction , y_test)
 
-    print("Accuracy for", symbol,":", log_reg_accuracy * 100 , "%")
-
+    print("Best C value for :", sector_, random_search.best_params_["C"])
+    print("Validation Score", random_search.best_score_)
+    print("Accuracy for", sector_,":", log_reg_accuracy * 100 , "%")
 
 
 # Make the Long Short Term Memory Algorithm.
