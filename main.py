@@ -53,11 +53,8 @@ print(data)  # Pre-Visualize Raw Data
 sector_info = pd.read_csv("sector_info.csv")
 sector_info = sector_info[["Symbol", "Sector"]]
 
-
 # Merge the Datasets with a common key (variable--- "Symbol") / Can merge more than 2 DataFrames
 final_dataset = pd.merge(data,sector_info, how="inner")
-
-# This section, we need to do a groupby.mean or difference, to get the data all neat.
 
 # Grouped by Sector and Date
 grouped_by = final_dataset.groupby(["Sector","Date"]).mean()
@@ -116,33 +113,27 @@ for i, file in enumerate(files):
 # Sort values by Symbol and date (avoid overlapping of calculations)
 data = data.sort_values(by=["Symbol", "Date"], ascending= True)
 data.columns = data.columns.astype(str)
-
+data = pd.merge(data, sector_info , how= "inner") #
+print(data)
 
 # Technical Indicators that will be used
-#Group by Symbol
+#Group by Symbol will be used to calculate the following technical indicators
 by_symbol = data.groupby("Symbol")["Adj Close"]
 
-# Momentum
-# Calculate Momentum for each Stock based on Adjusted Close Price with a 2-day lag
+# Momentum / Calculate Momentum for each Stock based on Adjusted Close Price with a 2-day lag
 momentum = by_symbol.apply(lambda x: x - x.shift(2))
 data = pd.concat([data, momentum.rename("Momentum")], axis = 1)
 
-# Moving Average
-# Calculated by symbol with a 3-day lag / Because it is a multi index DataFrame, we need to reset index
-# Rename the moving average calculation column from Adj Close to Moving Average
+# Moving Average / Calculated by symbol with a 3-day lag / Because it is a multi index DataFrame, we need to reset index
 data["Moving Average"] = data.groupby("Symbol")["Adj Close"].rolling(window = 2).mean().reset_index(0,drop = True)
 
-# Volatility
-# Calculate volatility (2 day lag) by each company
+# Volatility / Calculate volatility (2 day lag) by each company
 data["Volatility"] = by_symbol.pct_change().rolling(window = 2).std()
-
 
 # Relative Strength Index (RSI)
 RSI_lag = 10 # 10 days lag period
 RSI = by_symbol.apply(lambda x : RSIIndicator(x, window= RSI_lag).rsi())
 data["RSI"] = RSI.values # Fetch Values
-
-
 # Information Fetched From : https://technical-analysis-library-in-python.readthedocs.io/en/latest/ta.html#momentum-indicators
 
 # Create a Target Variable, using the calculation of Adj Closing price lag of 1 day, and then convert it to a binary classification
