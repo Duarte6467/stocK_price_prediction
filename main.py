@@ -18,9 +18,19 @@ from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score, f1_score
+from sklearn.metrics import accuracy_score, f1_score , mean_squared_error
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import RandomizedSearchCV
+
+# Kera Modules
+import keras.backend as K
+from keras.callbacks import  EarlyStopping
+from keras.optimizers import Adam
+from keras.models import load_model
+from keras.models import Sequential
+from keras.layers import LSTM , Dense , Dropout
+from keras.utils.vis_utils import plot_model
+
 
 warnings.filterwarnings("ignore")   # Remove deprecated warnings / from pandas for instance
 
@@ -101,7 +111,7 @@ for i, file in enumerate(files):
     axes[i].set_ylabel("Adj Close", fontsize=10)
     axes[i].set_yscale('log')  # Set the y-axis to logarithmic scale
 
-plt.show()
+#plt.show()
 
 # Data Manipulation Section
 #----------------------------------------------------------------------------------------------------------------------
@@ -130,6 +140,10 @@ RSI = by_symbol.apply(lambda x : RSIIndicator(x, window= RSI_lag).rsi())
 data["RSI"] = RSI.values                                                    # Fetch Values
 # Information Fetched From : https://technical-analysis-library-in-python.readthedocs.io/en/latest/ta.html#momentum-indicators
 
+
+
+#---------------------------------------------------------------------------------------------------------------------
+# Scaling / Normalisation of Data
 # Code to scale raw data to logarithmic
 log_scale = FunctionTransformer(np.log1p , validate= True)
 # Apply the logarithmic scaling to the column
@@ -137,7 +151,8 @@ columns_to_scale = ["Close","High","Low","Open","Volume"]
 data[columns_to_scale] = log_scale.transform(data[columns_to_scale])
 print("-"*100)
 print("The following section is strictly applied to Machine Learning")
-
+#--------------------------------------------------------------------------------------------------------
+# In this section, the values are averaged by its correspondent Sector and Date , respectively
 # Now, we need to average the values of each stock by each sector, giving us an approach of investment by sector
 data = pd.merge(data, sector_info , how= "inner")
 data = data.groupby(["Sector","Date"]).mean()
@@ -154,10 +169,9 @@ sector_names = data["Sector"].unique()
 
 # Define the parameter distribution to check what is the best C-value
 param_dist = {"C" : uniform(0.1 , 20)}
-
 # We needed to make a loop to iterate the logistic regression through each symbol
-for sector_ in sector_names:
-    data_symbol = data[data["Sector"] == sector]
+for sector_0 in sector_names:
+    data_symbol = data[data["Sector"] == sector_0]
     X = data_symbol[[ "Close","High","Low", "Open","Volume","Momentum","Moving Average","Volatility","RSI"]]
     x_train , x_test , y_train, y_test = train_test_split(X, data_symbol["Binary Predictor"], test_size= 0.2)
 
@@ -175,12 +189,41 @@ for sector_ in sector_names:
     log_reg_prediction = log_reg.predict(x_test)
     log_reg_accuracy = accuracy_score(log_reg_prediction , y_test)
 
-    print("Best C value for :", sector_, random_search.best_params_["C"])
+    print("Best C value for :", sector_0, random_search.best_params_["C"])
     print("Validation Score", random_search.best_score_)
-    print("Accuracy for", sector_,":", log_reg_accuracy * 100 , "%")
+    print("Accuracy for", sector_0,":", log_reg_accuracy * 100 , "%")
 
 
-# Make the Long Short Term Memory Algorithm.
+# Make the Long Short Term Memory Algorithm (LSTM)
+# Most of the code was retrieved from:
+# https://www.analyticsvidhya.com/blog/2021/10/machine-learning-for-stock-market-prediction-with-step-by-step-implementation/
+
+for sector_1 in sector_names:
+    data_symbol_lstm = data[data["Sector"] == sector_1]
+    X = data_symbol_lstm[["Close","High","Low","Open","Volume","Momentum","Moving Average","Volatility","RSI"]]
+
+    x_train , x_test , y_train , y_test = train_test_split(X, data_symbol_lstm["Binary Predictor"], test_size=0.2)
+
+    trainX = x_train.to_numpy()
+    testX = x_test.to_numpy()
+
+    x_train = trainX.reshape(x_train.shape[0], 1 , x_train.shape[1])
+    x_test = testX.reshape(x_test.shape[0], 1 , x_test.shape[1])
+    lstm = Sequential()
+    lstm.add(LSTM(32, input_shape = (1 ,trainX.shape[1])))
+    lstm.add(Dropout(0.18)) # Lower Value than standard to avoid loss in accuracy. May cause overfitting.
+    lstm.add(Dense(1, activation="sigmoid"))
+    lstm.compile(optimizer="adam",loss = "binary_crossentropy", metrics=["accuracy"]) # Binary Cross entropy is better, since we are using binary classification
+
+    lstm.fit(x_train , y_train , epochs= 50 , batch_size=32)
+    y_predict = lstm.predict(x_test)
+
+    # Calculate the Binary CrossEntropy and Accuracy
+    loss, accuracy = lstm.evaluate(x_test, y_test)
+
+    print(" Binary Cross entropy calculated in sector:", sector_1,":", loss)
+    print("Accuracy of Sector", sector_1,":", accuracy)
+
 
 
 
