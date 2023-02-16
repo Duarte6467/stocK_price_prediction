@@ -12,6 +12,7 @@ import plotly.express as px
 import openpyxl
 import sklearn as sk
 import os
+from sklearn.preprocessing import FunctionTransformer
 
 warnings.filterwarnings("ignore")   # Remove deprecated warnings / from pandas for instance
 
@@ -144,12 +145,10 @@ data["Moving Average"] = data.groupby("Symbol")["Adj Close"].rolling(window = 2)
 
 # Volatility
 # Calculate volatility (2 day lag) by each company
-
 data["Volatility"] = by_symbol.pct_change().rolling(window = 2).std()
 
 
 # Relative Strenght Index (RSI)
-
 RSI_lag = 10 # 10 days lag period
 RSI = by_symbol.apply(lambda x : RSIIndicator(x, window= RSI_lag).rsi())
 data["RSI"] = RSI.values # Fetch Values
@@ -157,17 +156,27 @@ print(type(RSI))
 
 # Information Fetched From : https://technical-analysis-library-in-python.readthedocs.io/en/latest/ta.html#momentum-indicators
 
-# Now we need the output feature, which will be 0 if the Adj close from time t is smaller than t-1
-# and it will be 1 if Adj Close from time t is bigger than t-1
-
-data["Predictor"] = data["Adj Close"].diff() # This is the output feature
+# Create a Target Variable, using the calculation of Adj Closing price lag of 1 day, and then convert it to a binary classification
+data["Binary Predictor"] = data["Adj Close"].diff().apply(lambda x: 1 if x > 0 else 0)
 
 
-# Convert the 'Price_Diff' column to binary classification
-#df["Binary Predictor"] = df["Predictor"].apply(lambda x: 1 if x > 0 else 0)
+print(data.isna().sum())
+
+# Replace NaN values with backward filling method / Best for time-series
+
+data = data.fillna(method= "bfill")
+print(data)
+
+# Now, we need to scale the data , to make it easier to interpret and calculate / We will use log scaling, since it is
+# better to read and interpret economic indicators.
 
 
+# Function that applies the logarithmic scale to specific columns chosen
+log_scale = FunctionTransformer(np.log1p , validate= True)
 
+# Apply the logarithmic scaling to the column
+columns_to_scale = ["Choose columns to scale"]
+data[columns_to_scale] = log_scale.transform(data[columns_to_scale])
 
 
 
