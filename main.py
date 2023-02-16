@@ -10,9 +10,16 @@ import pandas as pd
 import pandas_ta as ta
 import plotly.express as px
 import openpyxl
-import sklearn as sk
 import os
+
+import sklearn as sk
 from sklearn.preprocessing import FunctionTransformer
+from sklearn.model_selection import train_test_split
+from sklearn.decomposition import PCA
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, f1_score
+
 
 warnings.filterwarnings("ignore")   # Remove deprecated warnings / from pandas for instance
 
@@ -79,8 +86,6 @@ sector_names  = final_dataset.groups.keys()
 #---------------------------------------------------------------------------------------------------------------------
 """The following code section is just used to create charts and csv files for each sector"""
 
-
-
 # Run only once to decrease completion time
 for sector in sector_names:
     # Group each sector into one dataset
@@ -90,8 +95,6 @@ for sector in sector_names:
     name_of_csv = f"{sector}.csv"
     filepath = os.path.join( name_of_csv)
     each_sector.to_csv(filepath, index = False)
-
-
 
 
 # Fetch a list of each sector included in the directory
@@ -128,6 +131,8 @@ for i, file in enumerate(files):
 # Sort values by Symbol and date (avoid overlapping of calculations)
 data = data.sort_values(by=["Symbol", "Date"], ascending= True)
 
+
+
 # Technical Indicators that will be used
 #Group by Symbol
 by_symbol = data.groupby("Symbol")["Adj Close"]
@@ -160,23 +165,47 @@ print(type(RSI))
 data["Binary Predictor"] = data["Adj Close"].diff().apply(lambda x: 1 if x > 0 else 0)
 
 
-print(data.isna().sum())
-
 # Replace NaN values with backward filling method / Best for time-series
-
 data = data.fillna(method= "bfill")
 print(data)
 
 # Now, we need to scale the data , to make it easier to interpret and calculate / We will use log scaling, since it is
 # better to read and interpret economic indicators.
-
-
 # Function that applies the logarithmic scale to specific columns chosen
 log_scale = FunctionTransformer(np.log1p , validate= True)
 
 # Apply the logarithmic scaling to the column
-columns_to_scale = ["Choose columns to scale"]
+columns_to_scale = ["Close","High","Low","Open","Volume"]
 data[columns_to_scale] = log_scale.transform(data[columns_to_scale])
+
+
+# Define features and label
+raw_features = data[[ "Close","High","Low", "Open","Volume"]]
+technical_features = data[["Momentum","Moving Average","Volatility","RSI"]]
+X = raw_features + technical_features + data["Symbol"]
+Y = data["Binary Predictor"]
+
+training_size = int(len(data)*0.8) # Set the training data to 80%
+train = data[:training_size] # Train data up to row training size
+test = data[training_size:] # Test data from row training size
+
+# Set the Training / Testing Ratio
+X_train = train[X]
+y_train = train[Y]
+X_test = test[selected_features]
+y_test = test['target']
+
+
+
+
+# Perform Logistic Regression
+
+log_reg = LogisticRegression()
+logreg.fit()
+
+
+
+
 
 
 
