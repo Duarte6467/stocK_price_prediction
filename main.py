@@ -196,12 +196,10 @@ for sector_0 in sector_names:
 
     # Make prediction based on the  best C Value found
     log_reg = LogisticRegression(C=random_search.best_params_["C"])
-
     log_reg.fit(x_train, y_train)
     log_reg_prediction = log_reg.predict(x_test)
     log_reg_accuracy = accuracy_score(log_reg_prediction , y_test)
     log_reg_f1 = f1_score(log_reg_prediction , y_test)
-
 
     print("Best C value for ", sector_0, random_search.best_params_["C"])
     print("Accuracy for", sector_0,":", log_reg_accuracy * 100 , "%")
