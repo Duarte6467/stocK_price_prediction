@@ -181,26 +181,3 @@ data[columns_to_scale] = log_scale.transform(data[columns_to_scale])
 
 
 
-
-
-
-
-# This is the part where thhe Machine Learning Tecniques ( Logistic Regresion and whatnot) will do its magic
-
-
-
-# RSI (on n period) = 100 * average of n days up / (average of n days up + average of n days down)
-
-#def RSI():
- #   '''RSI (on n period) = 100 * average of n days up /
-  #  (average of n days up + average of n days down)'''
-
-   # Close = data.xs('Adj Close', axis=1, level=1)
-    #Close.
-    #RSI = pd.DataFrame(columns=Close.columns)
-    #T = Close.columns
-    #len(T)
-    #for i in len(T):
-     #   Close.
-
-
