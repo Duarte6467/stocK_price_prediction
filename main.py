@@ -11,7 +11,6 @@ import pandas_ta as ta
 import plotly.express as px
 import openpyxl
 import os
-
 import sklearn as sk
 from sklearn.preprocessing import FunctionTransformer
 from sklearn.model_selection import train_test_split
@@ -28,13 +27,9 @@ FTSE100 = pd.read_csv("EPIC.csv")
 
 #  Symbol Codes listed in the FTSE100 index / TOP30
 symbols = FTSE100["Symbol"]
-
 all_symbols = symbols.tolist()  # Convert format to List
-
 # Yfinance module to get all the information that we need / Efficient way to get results, although slower
 data = yf.download(all_symbols, period="2y" , interval="1d", threads= True, group_by= "ticker")
-
-
 
 # https://stackoverflow.com/questions/69117454/from-yfinance-to-manipulate-dataframe-with-pandas
 data = data.stack(0).reset_index().rename(columns= {"level_1":"Symbol"}) # Convert Multiindex to 2D Dataframe
@@ -56,34 +51,24 @@ print(data)  # Pre-Visualize Raw Data
 #sector_info_csv = sector_info.to_csv("sector_info.csv")
 
 sector_info = pd.read_csv("sector_info.csv")
-
 sector_info = sector_info[["Symbol", "Sector"]]
-print(sector_info)
+
 
 # Merge the Datasets with a common key (variable--- "Symbol") / Can merge more than 2 DataFrames
 final_dataset = pd.merge(data,sector_info, how="inner")
-print(final_dataset)
 
 # This section, we need to do a groupby.mean or difference, to get the data all neat.
 
 # Grouped by Sector and Date
 grouped_by = final_dataset.groupby(["Sector","Date"]).mean()
-print(grouped_by)
 
-
-# Plot Graphs to see if there are trends in each sector
 print(sector_info.value_counts("Sector"))
-# Use the final Dataset
-# Make a loop:
 
 final_dataset = final_dataset.groupby("Sector")
-
 sector_names  = final_dataset.groups.keys()
 
-
-
-
 #---------------------------------------------------------------------------------------------------------------------
+# Plot Graphs to see if there are trends in each sector
 """The following code section is just used to create charts and csv files for each sector"""
 
 # Run only once to decrease completion time
@@ -140,7 +125,6 @@ by_symbol = data.groupby("Symbol")["Adj Close"]
 # Momentum
 # Calculate Momentum for each Stock based on Adjusted Close Price with a 2-day lag
 momentum = by_symbol.apply(lambda x: x - x.shift(2))
-print(momentum)
 data = pd.concat([data, momentum.rename("Momentum")], axis = 1)
 
 # Moving Average
@@ -153,11 +137,11 @@ data["Moving Average"] = data.groupby("Symbol")["Adj Close"].rolling(window = 2)
 data["Volatility"] = by_symbol.pct_change().rolling(window = 2).std()
 
 
-# Relative Strenght Index (RSI)
+# Relative Strength Index (RSI)
 RSI_lag = 10 # 10 days lag period
 RSI = by_symbol.apply(lambda x : RSIIndicator(x, window= RSI_lag).rsi())
 data["RSI"] = RSI.values # Fetch Values
-print(type(RSI))
+
 
 # Information Fetched From : https://technical-analysis-library-in-python.readthedocs.io/en/latest/ta.html#momentum-indicators
 
@@ -167,7 +151,7 @@ data["Binary Predictor"] = data["Adj Close"].diff().apply(lambda x: 1 if x > 0 e
 
 # Replace NaN values with backward filling method / Best for time-series
 data = data.fillna(method= "bfill")
-print(data)
+
 
 # Now, we need to scale the data , to make it easier to interpret and calculate / We will use log scaling, since it is
 # better to read and interpret economic indicators.
@@ -177,31 +161,26 @@ log_scale = FunctionTransformer(np.log1p , validate= True)
 # Apply the logarithmic scaling to the column
 columns_to_scale = ["Close","High","Low","Open","Volume"]
 data[columns_to_scale] = log_scale.transform(data[columns_to_scale])
-
+print("-"*100)
+print("The following section is strictly applied to Machine Learning")
 
 # Define features and label
+
+
 raw_features = data[[ "Close","High","Low", "Open","Volume"]]
 technical_features = data[["Momentum","Moving Average","Volatility","RSI"]]
 X = raw_features + technical_features + data["Symbol"]
-Y = data["Binary Predictor"]
 
-training_size = int(len(data)*0.8) # Set the training data to 80%
-train = data[:training_size] # Train data up to row training size
-test = data[training_size:] # Test data from row training size
 
-# Set the Training / Testing Ratio
-X_train = train[X]
-y_train = train[Y]
-X_test = test[selected_features]
-y_test = test['target']
+
+x_train, x_test , y_train , y_test = train_test_split(X, data["Binary Predictor"], test_size= 0.2)
 
 
 
 
 # Perform Logistic Regression
 
-log_reg = LogisticRegression()
-logreg.fit()
+
 
 
 
