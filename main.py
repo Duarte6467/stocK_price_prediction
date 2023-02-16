@@ -115,7 +115,7 @@ for i, file in enumerate(files):
 # Data Manipulation Section
 # Sort values by Symbol and date (avoid overlapping of calculations)
 data = data.sort_values(by=["Symbol", "Date"], ascending= True)
-
+data.columns = data.columns.astype(str)
 
 
 # Technical Indicators that will be used
@@ -166,22 +166,29 @@ print("The following section is strictly applied to Machine Learning")
 
 # Define features and label
 
-
-raw_features = data[[ "Close","High","Low", "Open","Volume"]]
-technical_features = data[["Momentum","Moving Average","Volatility","RSI"]]
-X = raw_features + technical_features + data["Symbol"]
+stock_symbols =  data["Symbol"].unique()
 
 
 
-x_train, x_test , y_train , y_test = train_test_split(X, data["Binary Predictor"], test_size= 0.2)
+# We needed to make a loop to iterate the logistic regression through each symbol
+for symbol in stock_symbols:
+    data_symbol = data[data["Symbol"] == symbol]
+    X = data_symbol[[ "Close","High","Low", "Open","Volume","Momentum","Moving Average","Volatility","RSI"]]
+    x_train , x_test , y_train, y_test = train_test_split(X, data_symbol["Binary Predictor"], test_size= 0.2)
+
+    # Apply the Logistic Regression
+    log_reg = LogisticRegression()
+    log_reg.fit(x_train , y_train)
+
+    # Make predictions
+    log_reg_prediction = log_reg.predict(x_test)
+    log_reg_accuracy = accuracy_score(log_reg_prediction , y_test)
+
+    print("Accuracy for", symbol,":", log_reg_accuracy * 100 , "%")
 
 
 
-
-# Perform Logistic Regression
-
-
-
+# Make the Long Short Term Memory Algorithm.
 
 
 
