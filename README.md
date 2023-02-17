@@ -2,33 +2,14 @@
 Coursework
 
 
+This folder contains the main.py , where you will find all of the code used throughout the assessment.
+There is a subfolder, where it contains a chart that shows the correlation between companies by each sector.
 
-
-Some variables that we can use to predict short term movements on the stock market are:Cancel changes
-Open 
-Close
-High
-Low 
-Share Price
-Earning Per Share  (Bigger determinant in the long run , but still can be used as a short term determinant)
-Price to earnings ( P / E ratio) (Long Run Determinant, but still we can use it to see if something comes up 
-
-
-Hamze -- As you said , we shall divide the top 30 companies by sector if you want, and see which sector is more/less volatile.
+Please do not add any more .csv file to the folder, otherwise main.py will not run properly.
 
 
 
 
+Although some code is referenced, other code referencing was lost along the way. This is because the code is far too complex to add refernces everytime a line of code appears.
 
-
-
-Important Notes:
-https://stackoverflow.com/questions/67746560/issues-while-extracting-industry-sector-from-yahoo-finance-package
-
-
-
-
-
-Very Important Articles , containing the code to run the ML Algorithms:
-https://www.analyticsvidhya.com/blog/2021/10/machine-learning-for-stock-market-prediction-with-step-by-step-implementation/
-https://towardsdatascience.com/stock-market-analytics-with-pca-d1c2318e3f0e
+Some of the code was retrieved from module documentation, stack overflow and Towards Data Science
