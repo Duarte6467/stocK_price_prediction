@@ -1,4 +1,6 @@
 import os.path
+
+import sklearn.metrics
 import yfinance as yf
 import matplotlib.pyplot as plt
 import numpy as np
@@ -19,9 +21,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score, f1_score , mean_squared_error
+from sklearn.metrics import accuracy_score, f1_score , mean_squared_error ,silhouette_score
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import RandomizedSearchCV
+from sklearn.cluster import KMeans
+
 # Kera Modules
 import keras.backend as K
 from keras.callbacks import  EarlyStopping
@@ -243,7 +247,55 @@ for sector_1 in sector_names:
 
 
 
+# Calculate the K- Nearest Neighbour
 
+# Create empty dictionaries  to store results for each sector
+sector_accuracy = {}
+sector_best_param = {}
+sector_f1_scores = {}
+
+for sector_2 in sector_names:
+    data_symbol_k = data[data["Sector"] == sector_2]
+    X = data_symbol_k[["Close", "High", "Low", "Open", "Volume", "Momentum", "Moving Average", "Volatility", "RSI"]]
+    # Split the data
+    x_train , x_test , y_train , y_test = train_test_split(X, data_symbol_k["Binary Predictor"], test_size= 0.2)
+
+    # List of parameters that will be used to improve the Model / Find the best number of neighbours
+    parameter_grid = {"n_neighbors": [1,3,5,7,9,11,13]}
+
+    # Start KNN Classifier and the grid search
+    knn = KNeighborsClassifier()
+    grid_search = GridSearchCV(knn , param_grid= parameter_grid , cv= 5 , scoring="f1_micro")
+
+
+    # Find the best parameter using each combination of hyperparameters
+    grid_search.fit(x_train, y_train)
+
+    # Fetch the best parameter value and the corresponding classifier
+    best_parameter = grid_search.best_params_
+    knn = grid_search.best_estimator_
+
+
+    # Initialize prediction process on the testing data
+    y_pred = knn.predict(x_test)
+
+    # Calculate performance scores
+    accuracy = accuracy_score(y_test , y_pred)
+    f1_value = f1_score(y_test , y_pred, average="micro")
+
+
+    sector_accuracy[sector_2] = accuracy
+    sector_best_param[sector_2] = best_parameter
+    sector_f1_scores[sector_2] = f1_value
+
+
+# Print the Results for each sector
+
+for sector_2 in sector_names:
+    print("Sector:", sector_2)
+    print("Accuracy:", sector_accuracy[sector_2]*100,"%")
+    print("Best Parameter:", sector_best_param[sector_2])
+    print("F1 Score:" , sector_f1_scores[sector_2])
 
 
 
