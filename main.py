@@ -187,9 +187,12 @@ for sector_0 in sector_names:
     X = data_symbol[[ "Close","High","Low", "Open","Volume","Momentum","Moving Average","Volatility","RSI"]]
     x_train , x_test , y_train, y_test = train_test_split(X, data_symbol["Binary Predictor"], test_size= 0.2)
 
+    # Check if the class is balanced or not
+    #class_counts = data_symbol["Binary Predictor"].value_counts(normalize= True)*100
+    #print(class_counts)
+
     # Apply the Logistic Regression
     log_reg_c = LogisticRegression()
-
     # Perform Cross-Validation randomized search
     random_search = RandomizedSearchCV(log_reg_c, param_distributions= param_dist , n_iter=100, cv= 5)
     random_search.fit(x_train, y_train)
@@ -236,6 +239,7 @@ for sector_1 in sector_names:
     print("Binary Cross entropy calculated in sector:", sector_1,":", loss)
     print("Accuracy of Sector", sector_1,":", accuracy *100,"%")
     print("F1 score of Sector", sector_1, ":", f1)
+
 
 
 
