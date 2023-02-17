@@ -1,5 +1,6 @@
-import os.path
+""" This Code was  made in collaboration with Hamze Barreh"""
 
+import os.path
 import sklearn.metrics
 import yfinance as yf
 import matplotlib.pyplot as plt
@@ -48,7 +49,7 @@ data = data.stack(0).reset_index().rename(columns= {"level_1":"Symbol"}) # Conve
 # Code Fetched from :  https://stackoverflow.com/questions/69117454/from-yfinance-to-manipulate-dataframe-with-pandas
 
 #---------------------------------------------------------------------------------------------------------------------
-# This section is extremely bugged
+# This section is extremely bugged and does not work properly
 # Get the sector for each symbol
 #sector_info = pd.DataFrame()
 
@@ -128,6 +129,7 @@ for i, file in enumerate(files):
 
 
 #----------------------------------------------------------------------------------------------------------------------
+
 # Data Manipulation Section
 # Sort values by Symbol and date (avoid overlapping of calculations)
 data = data.sort_values(by=["Symbol", "Date"], ascending= True)
@@ -166,7 +168,6 @@ data[columns_to_scale] = log_scale.transform(data[columns_to_scale])
 print("-"*100)
 print("The following section is strictly applied to Machine Learning")
 #--------------------------------------------------------------------------------------------------------
-
 
 # In this section, the values are averaged by its correspondent Sector and Date, respectively
 # Now, we need to average the values of each stock by each sector, giving us an approach of investment by sector
@@ -212,7 +213,7 @@ for sector_0 in sector_names:
     print("Accuracy for", sector_0,":", log_reg_accuracy * 100 , "%")
     print("F1 Score for",sector_0,":",log_reg_f1)
 
-
+#-----------------------------------------------------------------------------------------------------------------------
 # Make the Long Short Term Memory Algorithm (LSTM)
 # Most of the code and its purpose was retrieved from:
 # https://www.analyticsvidhya.com/blog/2021/10/machine-learning-for-stock-market-prediction-with-step-by-step-implementation/
@@ -244,7 +245,7 @@ for sector_1 in sector_names:
     print("Accuracy of Sector", sector_1,":", accuracy *100,"%")
     print("F1 score of Sector", sector_1, ":", f1)
 
-
+#---------------------------------------------------------------------------------------------------------
 
 
 # Calculate the K- Nearest Neighbour
@@ -296,7 +297,6 @@ for sector_2 in sector_names:
     print("Accuracy:", sector_accuracy[sector_2]*100,"%")
     print("Best Parameter:", sector_best_param[sector_2])
     print("F1 Score:" , sector_f1_scores[sector_2])
-
 
 
 
